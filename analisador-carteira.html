@@ -3,7 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Analisador de Carteira — Acelerador Patrimonial</title>
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:;">
+<meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=()">
+<title>Analisador de Carteira — Acelerador Patrimonial v2</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -51,44 +55,57 @@ main{padding-top:56px;min-height:100vh}
 .section-title span{color:var(--champagne);font-style:italic}
 .section-sub{font-size:13px;color:var(--cinza);margin-bottom:32px;line-height:1.7}
 
+/* FOCUS VISIBLE */
+:focus-visible{outline:2px solid var(--champagne);outline-offset:3px}
+
 /* UPLOAD */
-.upload-area{border:2px dashed rgba(44,74,62,0.2);border-radius:4px;padding:48px;text-align:center;cursor:pointer;background:white;transition:all .2s;margin-bottom:24px}
-.upload-area:hover,.upload-area.drag-over{border-color:var(--champagne);background:var(--champagne-dim)}
-.upload-icon{font-size:32px;margin-bottom:16px;opacity:.4}
+.upload-area{border:2px dashed rgba(44,74,62,0.2);border-radius:4px;padding:48px;text-align:center;cursor:pointer;background:white;transition:all .25s;margin-bottom:24px;position:relative;overflow:hidden}
+.upload-area::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 50% 50%,rgba(201,169,110,0.06),transparent);opacity:0;transition:opacity .3s}
+.upload-area:hover,.upload-area.drag-over{border-color:var(--champagne);background:var(--champagne-dim);transform:translateY(-1px);box-shadow:0 8px 24px rgba(44,74,62,0.08)}
+.upload-area:hover::before,.upload-area.drag-over::before{opacity:1}
+.upload-area.drag-over{border-style:solid;border-color:var(--champagne);box-shadow:0 0 0 4px rgba(201,169,110,0.12),0 8px 24px rgba(44,74,62,0.08)}
+.upload-area:active{transform:translateY(0)}
+.upload-icon{font-size:36px;margin-bottom:16px;opacity:.4;transition:opacity .2s,transform .2s;display:block}
+.upload-area:hover .upload-icon{opacity:.7;transform:scale(1.1) translateY(-2px)}
 .upload-title{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--verde);margin-bottom:8px}
 .upload-sub{font-size:12px;color:var(--cinza);line-height:1.6}
 .upload-formats{display:flex;gap:8px;justify-content:center;margin-top:16px}
-.format-tag{padding:4px 12px;font-size:10px;letter-spacing:1px;background:var(--offwhite-dim);color:var(--cinza);border-radius:2px;text-transform:uppercase}
+.format-tag{padding:4px 12px;font-size:10px;letter-spacing:1px;background:var(--offwhite-dim);color:var(--cinza);border-radius:2px;text-transform:uppercase;transition:all .2s}
+.upload-area:hover .format-tag{background:rgba(201,169,110,0.15);color:var(--verde)}
 
 /* FORM */
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:32px}
 .form-group{display:flex;flex-direction:column;gap:6px}
 .form-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--champagne)}
-.form-input{padding:12px 16px;font-size:14px;font-family:'DM Sans',sans-serif;border:1px solid rgba(44,74,62,0.15);border-radius:2px;background:white;color:var(--carvao);transition:border-color .2s}
-.form-input:focus{outline:none;border-color:var(--champagne)}
+.form-input{padding:12px 16px;font-size:14px;font-family:'DM Sans',sans-serif;border:1px solid rgba(44,74,62,0.15);border-radius:2px;background:white;color:var(--carvao);transition:border-color .2s,box-shadow .2s}
+.form-input:focus{outline:none;border-color:var(--champagne);box-shadow:0 0 0 3px rgba(201,169,110,0.1)}
 
 /* BUTTONS */
-.btn{padding:10px 24px;font-size:12px;letter-spacing:2px;text-transform:uppercase;border:none;border-radius:2px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
+.btn{padding:10px 24px;font-size:12px;letter-spacing:2px;text-transform:uppercase;border:none;border-radius:2px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;display:inline-flex;align-items:center;gap:8px;min-height:40px}
 .btn-primary{background:var(--verde);color:var(--champagne)}
-.btn-primary:hover{background:var(--verde-mid)}
+.btn-primary:hover{background:var(--verde-mid);box-shadow:0 4px 12px rgba(44,74,62,0.2)}
 .btn-secondary{background:var(--offwhite-dim);color:var(--verde);border:1px solid rgba(44,74,62,0.2)}
 .btn-secondary:hover{background:var(--verde);color:var(--champagne)}
 .btn-ghost{background:transparent;color:var(--cinza);border:1px solid rgba(44,74,62,0.15)}
 .btn-ghost:hover{border-color:var(--red);color:var(--red)}
 .btn-large{padding:16px 40px;font-size:13px}
+.btn:active{transform:translateY(1px)}
 
 /* TABLE */
-.table-wrap{overflow-x:auto;margin-bottom:24px}
+.table-wrap{overflow-x:auto;margin-bottom:24px;border-radius:2px;box-shadow:0 1px 4px rgba(44,74,62,0.06)}
+.table-wrap::-webkit-scrollbar{height:4px}
+.table-wrap::-webkit-scrollbar-track{background:var(--offwhite-dim)}
+.table-wrap::-webkit-scrollbar-thumb{background:var(--champagne);border-radius:2px;opacity:.5}
 table{width:100%;border-collapse:collapse;font-size:13px}
 thead{background:var(--verde)}
 thead th{color:var(--offwhite);padding:12px 16px;text-align:left;font-size:9px;letter-spacing:2px;text-transform:uppercase;font-weight:400}
-tbody tr{border-bottom:1px solid rgba(44,74,62,0.07);background:white}
-tbody tr:hover{background:rgba(44,74,62,0.02)}
+tbody tr{border-bottom:1px solid rgba(44,74,62,0.07);background:white;transition:background .15s}
+tbody tr:hover{background:rgba(201,169,110,0.04)}
 tbody td{padding:11px 16px;color:var(--cinza);vertical-align:middle}
 tbody td:first-child{color:var(--carvao)}
-.td-input{padding:5px 8px;font-size:13px;border:1px solid transparent;border-radius:2px;background:transparent;width:100%;font-family:'DM Sans',sans-serif;color:var(--carvao)}
+.td-input{padding:5px 8px;font-size:13px;border:1px solid transparent;border-radius:2px;background:transparent;width:100%;font-family:'DM Sans',sans-serif;color:var(--carvao);transition:border-color .15s,background .15s}
 .td-input:focus{outline:none;border-color:var(--champagne);background:white}
-.td-select{padding:5px 8px;font-size:12px;border:1px solid transparent;border-radius:2px;background:transparent;cursor:pointer;font-family:'DM Sans',sans-serif;color:var(--carvao);max-width:160px}
+.td-select{padding:5px 8px;font-size:12px;border:1px solid transparent;border-radius:2px;background:transparent;cursor:pointer;font-family:'DM Sans',sans-serif;color:var(--carvao);max-width:160px;transition:border-color .15s,background .15s}
 .td-select:focus{outline:none;border-color:var(--champagne);background:white}
 
 /* BADGES */
@@ -100,8 +117,9 @@ tbody td:first-child{color:var(--carvao)}
 
 /* GENERATE BAR */
 .generate-bar{background:var(--verde-deep);padding:28px 80px;display:flex;align-items:center;justify-content:space-between;gap:24px}
-.gen-info{color:rgba(245,240,232,0.5);font-size:13px;line-height:1.8}
+.gen-info{color:rgba(245,240,232,0.5);font-size:13px;line-height:1.8;display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px}
 .gen-info strong{color:var(--champagne)}
+.gen-sep{margin:0 4px;opacity:.3;flex-shrink:0}
 
 /* PARSE STATUS */
 .parse-status{padding:14px 20px;border-radius:2px;margin-bottom:20px;font-size:13px;display:none}
@@ -219,6 +237,9 @@ tbody td:first-child{color:var(--carvao)}
 /* CONFLICT TAG */
 .tag-conflito{font-size:10px;background:var(--red-dim);color:var(--red);padding:2px 6px;border-radius:2px;margin-left:6px;font-weight:600;letter-spacing:1px;vertical-align:middle}
 
+/* REPORT RATE GRID */
+.rep-rate-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:2px}
+
 /* PRINT */
 @media print{
   nav,.steps-bar,#step-input,.rep-actions{display:none!important}
@@ -233,12 +254,108 @@ tbody td:first-child{color:var(--carvao)}
 
 /* RESPONSIVE */
 @media(max-width:768px){
-  nav{padding:0 24px}
-  .hero,.content,.generate-bar,.rep-section,.rep-actions,.rep-footer,.cta-section{padding-left:24px;padding-right:24px}
-  .steps-bar{padding:0 24px}
-  .form-grid,.compare-grid{grid-template-columns:1fr}
+  /* Nav */
+  nav{padding:0 16px}
+  .nav-brand{font-size:11px;letter-spacing:2px}
+  .nav-tag{font-size:9px}
+
+  /* Steps */
+  .steps-bar{padding:0;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .step-item{padding:12px 16px;font-size:9px;letter-spacing:1px;flex-shrink:0;white-space:nowrap}
+
+  /* Hero */
+  .hero{padding:40px 20px 28px}
+
+  /* Content */
+  .content{padding:32px 20px}
+  .section-title{font-size:22px}
+  .divider-gold{margin:24px 0}
+
+  /* Upload */
+  .upload-area{padding:28px 20px}
+  .upload-title{font-size:17px}
+
+  /* Form */
+  .form-grid{grid-template-columns:1fr}
+  .form-input,.td-input{font-size:16px!important}
+  .td-select{font-size:15px!important}
+
+  /* Table — scroll horizontal */
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -20px 24px;padding:0 20px 6px}
+  .table-wrap::-webkit-scrollbar{height:3px}
+  .table-wrap::-webkit-scrollbar-thumb{background:var(--champagne);border-radius:2px;opacity:.5}
+  table{min-width:620px;font-size:12px}
+  thead th{padding:10px 12px}
+  tbody td{padding:9px 12px}
+
+  /* Generate bar */
+  .generate-bar{flex-direction:column;gap:14px;padding:20px;align-items:stretch}
+  .gen-info{justify-content:center;font-size:12px;gap:3px 6px;text-align:center}
+  .gen-sep{display:none}
+  .generate-bar .btn-large{width:100%;justify-content:center}
+
+  /* Buttons — touch target */
+  .btn{min-height:44px}
+  .btn-large{padding:14px 24px}
+
+  /* Report cover */
+  .report-cover{padding:56px 20px;min-height:unset}
+  .rc-eye{font-size:8px;letter-spacing:3px}
+  .rc-divider{margin:20px auto}
+  .rc-meta{gap:24px;margin-top:28px}
+  .rc-meta-item .val{font-size:16px}
+  .rc-brand{display:none}
+
+  /* Rep sections */
+  .rep-section{padding:40px 20px}
+  .rep-eye{font-size:8px;letter-spacing:3px}
+  .rep-title{font-size:clamp(22px,6vw,32px)}
+  .rep-desc{font-size:13px;margin-bottom:20px}
+
+  /* Rate grid (report) */
+  .rep-rate-grid{grid-template-columns:1fr!important}
+
+  /* KPI */
   .kpi-grid{grid-template-columns:1fr 1fr}
+  .kpi-box{padding:18px 12px}
+  .kpi-num{font-size:clamp(14px,4.5vw,22px)}
+
+  /* Compare */
+  .compare-grid{grid-template-columns:1fr}
+  .compare-col{padding:24px 18px}
+  .c-item{font-size:12px}
+
+  /* Savings */
+  .savings-box{padding:32px 20px}
+  .sav-num{font-size:clamp(28px,7vw,44px)}
+
+  /* Conflict card */
+  .conflict-card{padding:18px}
+  .cc-top{flex-direction:column;gap:8px;align-items:flex-start}
+  .cc-val{font-size:18px}
+  .cc-cost{text-align:left}
+
+  /* Bars */
   .bars-wrap{grid-template-columns:1fr}
+
+  /* Rep actions */
+  .rep-actions{flex-direction:column;align-items:stretch;padding:12px 16px;gap:10px}
+  .rep-actions .btn{width:100%;justify-content:center}
+  .rep-actions-hint{display:none}
+
+  /* Rep footer */
+  .rep-footer{flex-direction:column;gap:8px;padding:28px 20px}
+  .rf-meta{font-size:10px}
+
+  /* CTA */
+  .cta-section{padding:48px 20px}
+  .cta-section h2{font-size:clamp(26px,7vw,36px)}
+}
+
+@media(max-width:400px){
+  .kpi-grid{grid-template-columns:1fr}
+  .rc-meta{gap:16px}
+  .step-item span:not(.step-num){display:none}
 }
 </style>
 </head>
@@ -287,12 +404,14 @@ tbody td:first-child{color:var(--carvao)}
     <div class="section-title">Importar <span>Carteira</span></div>
     <p class="section-sub">Faça upload do extrato em PDF ou CSV para importar automaticamente, ou adicione os produtos manualmente.</p>
 
-    <div class="upload-area" id="upload-area" onclick="document.getElementById('file-input').click()">
-      <div class="upload-icon">📎</div>
+    <div class="upload-area" id="upload-area" onclick="document.getElementById('file-input').click()"
+      role="button" tabindex="0" aria-label="Clique ou arraste um arquivo PDF ou CSV para importar"
+      onkeydown="if(event.key==='Enter'||event.key===' ')document.getElementById('file-input').click()">
+      <span class="upload-icon">📎</span>
       <div class="upload-title">Arraste o arquivo ou clique para selecionar</div>
-      <p class="upload-sub">O sistema tentará extrair os produtos automaticamente.<br>Você poderá revisar e corrigir antes de gerar o relatório.</p>
+      <p class="upload-sub">O sistema extrai os produtos automaticamente via servidor.<br>Você poderá revisar e corrigir antes de gerar o relatório.</p>
       <div class="upload-formats">
-        <span class="format-tag">PDF</span>
+        <span class="format-tag">PDF XP</span>
         <span class="format-tag">CSV</span>
       </div>
     </div>
@@ -302,12 +421,12 @@ tbody td:first-child{color:var(--carvao)}
     <div class="divider-gold"></div>
 
     <!-- Products -->
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:16px">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:16px;flex-wrap:wrap">
       <div>
         <div class="section-title" style="margin-bottom:4px">Produtos na <span>Carteira</span></div>
         <p style="font-size:12px;color:var(--cinza)">Adicione ou edite os produtos — revise as comissões estimadas</p>
       </div>
-      <button class="btn btn-secondary" onclick="addRow()" style="flex-shrink:0;margin-top:4px">+ Adicionar Produto</button>
+      <button class="btn btn-secondary" onclick="addRow()" style="flex-shrink:0;margin-top:4px" aria-label="Adicionar produto manualmente">+ Adicionar Produto</button>
     </div>
 
     <div class="table-wrap">
@@ -336,12 +455,16 @@ tbody td:first-child{color:var(--carvao)}
 
   <div class="generate-bar">
     <div class="gen-info">
-      Produtos: <strong id="g-count">0</strong> &nbsp;|&nbsp;
-      Patrimônio: <strong id="g-patrim">R$ 0</strong> &nbsp;|&nbsp;
-      Taxa média atual: <strong id="g-avgpct" style="color:#e8a0a0">0,00%</strong> &nbsp;|&nbsp;
-      Custo anual atual: <strong id="g-comm" style="color:#e8a0a0">R$ 0</strong> &nbsp;|&nbsp;
-      Custo no modelo fee: <strong id="g-fee" style="color:#88d4a8">R$ 0</strong> &nbsp;|&nbsp;
-      <span id="g-div-wrap" style="display:none">Dividendos (informativo): <strong id="g-dividends" style="color:var(--champagne)">R$ 0</strong></span>
+      <span>Produtos: <strong id="g-count">0</strong></span>
+      <span class="gen-sep">|</span>
+      <span>Patrimônio: <strong id="g-patrim">R$ 0</strong></span>
+      <span class="gen-sep">|</span>
+      <span>Taxa atual: <strong id="g-avgpct" style="color:#e8a0a0">0,00%</strong></span>
+      <span class="gen-sep">|</span>
+      <span>Custo atual: <strong id="g-comm" style="color:#e8a0a0">R$ 0</strong></span>
+      <span class="gen-sep">|</span>
+      <span>Custo fee: <strong id="g-fee" style="color:#88d4a8">R$ 0</strong></span>
+      <span id="g-div-wrap" style="display:none"><span class="gen-sep">|</span><span>Dividendos: <strong id="g-dividends" style="color:var(--champagne)">R$ 0</strong></span></span>
     </div>
     <button class="btn btn-primary btn-large" onclick="genReport()">Gerar Diagnóstico →</button>
   </div>
@@ -368,6 +491,18 @@ const BRAND = {
   name: 'Acelerador Patrimonial',
   tagline: 'Diagnóstico Patrimonial',
 };
+
+// ══════════════════════════════════════════
+// PRÉ-PREENCHIMENTO VIA CADASTRO
+// ══════════════════════════════════════════
+(function loadLead() {
+  try {
+    const lead = JSON.parse(localStorage.getItem('ap_lead') || 'null');
+    if (!lead) return;
+    const nomeEl = document.getElementById('cli-name');
+    if (nomeEl && !nomeEl.value && lead.nome) nomeEl.value = lead.nome;
+  } catch(e) {}
+})();
 
 // ══════════════════════════════════════════
 // ESTRUTURA DE FEE
@@ -475,6 +610,11 @@ const TIPOS = {
     label:'Outros', risk:'medio',
     commPct: 0.015, amort: 1, upfront: false,
     desc: 'Produto não classificado', flags:[]
+  },
+  'Saldo em Conta': {
+    label:'Saldo em Conta', risk:'baixo',
+    commPct: 0, amort: 0, upfront: false,
+    desc: 'Saldo disponível em conta corrente', flags:[]
   },
 };
 
@@ -603,12 +743,128 @@ ua.addEventListener('drop', e=>{ e.preventDefault(); ua.classList.remove('drag-o
 
 function handleFile(inp) { if(inp.files[0]) processFile(inp.files[0]); }
 
+function handleJSON(inp) {
+  if (!inp.files[0]) return;
+  const file = inp.files[0];
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+
+      // Limpa produtos existentes
+      products = [];
+
+      // Importa produtos do JSON
+      if (data.produtos && Array.isArray(data.produtos)) {
+        data.produtos.forEach(p => {
+          if (p.valor > 0) {
+            addRow({
+              name: p.nome,
+              type: detectType(p.nome),
+              value: p.valor.toString(),
+              issuer: '',
+              adminFee: '',
+              comm: ''
+            });
+          }
+        });
+
+        updateSummary();
+
+        const resumo = data.resumo || {};
+        const total = resumo.total || 0;
+        const totalRF = resumo.totalRendaFixa || 0;
+        const totalRV = resumo.totalRendaVariavel || 0;
+        const totalFundos = resumo.totalFundos || 0;
+
+        status('ok',
+          `✓ <strong>${data.produtos.length} produto(s)</strong> importado(s) com sucesso!<br>` +
+          `Total: <strong>${BRL(total)}</strong> ` +
+          `(RF: ${BRL(totalRF)} | RV: ${BRL(totalRV)}` +
+          (totalFundos > 0 ? ` | Fundos: ${BRL(totalFundos)}` : '') + `)`
+        );
+      } else {
+        status('err', '⚠ Formato JSON inválido. Certifique-se de usar o arquivo gerado pelo script Python.');
+      }
+    } catch (error) {
+      status('err', `⚠ Erro ao ler JSON: ${error.message}`);
+    }
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+
+
 function processFile(file) {
   const ext = file.name.split('.').pop().toLowerCase();
   status('', `⏳ Processando "${file.name}"...`);
   if (ext==='csv') { const r=new FileReader(); r.onload=e=>parseCSV(e.target.result); r.readAsText(file,'UTF-8'); }
-  else if (ext==='pdf') parsePDF(file);
+  else if (ext==='pdf') {
+    // Tenta primeiro o servidor Python (mais confiável para PDF da XP)
+    tryPythonExtraction(file).catch(() => {
+      parsePDF(file);
+    });
+  }
   else status('err','⚠ Formato não suportado. Use PDF ou CSV.');
+}
+
+async function tryPythonExtraction(file) {
+  try {
+    const formData = new FormData();
+    formData.append('pdf', file);
+
+    console.log('[Python] Enviando PDF para servidor...');
+    const response = await fetch('/api/extract-pdf', {
+      method: 'POST',
+      body: formData
+    });
+
+    console.log('[Python] Resposta:', response.status);
+    if (!response.ok) {
+      throw new Error('Servidor não disponível: ' + response.status);
+    }
+
+    const data = await response.json();
+    console.log('[Python] Produtos recebidos:', data.produtos?.length);
+
+    if (data.produtos && data.produtos.length > 0) {
+      products = [];
+      data.produtos.forEach(p => {
+        if (p.valor > 0) {
+          // Mapeia tipos do Python para tipos do sistema
+          const tipoMap = {
+            'Acoes':           'Ações',
+            'FII':             'FII',
+            'Fundo Alta Taxa': 'Fundo Alta Taxa',
+            'Fundo Media Taxa':'Fundo Média Taxa',
+            'Fundo Baixa Taxa':'Fundo Baixa Taxa',
+            'Renda Fixa':      'CDB Banco Pequeno',
+            'COE':             'COE',
+            'Saldo':           'Saldo em Conta'
+          };
+          const tipo = tipoMap[p.tipo] || detectType(p.nome);
+          addRow({
+            name: p.nome,
+            type: tipo,
+            value: p.valor.toString(),
+            issuer: '',
+            adminFee: '',
+            comm: ''
+          });
+        }
+      });
+
+      updateSummary();
+      const total = data.resumo?.total || 0;
+      const cliente = data.meta?.cliente ? `<br>Cliente: <strong>${data.meta.cliente}</strong> | Conta: ${data.meta.conta}` : '';
+      const patrimonio = data.meta?.patrimonio ? ` | Patrimônio XP: <strong>${BRL(data.meta.patrimonio)}</strong>` : '';
+      status('ok', `✓ <strong>${data.produtos.length} produto(s)</strong> extraído(s) com sucesso! Total: <strong>${BRL(total)}</strong>${patrimonio}${cliente}`);
+    } else {
+      throw new Error('Nenhum produto extraído');
+    }
+  } catch (error) {
+    console.log('[Python] Falhou, usando PDF.js...', error.message);
+    throw error;
+  }
 }
 
 function status(type, msg) {
@@ -691,7 +947,19 @@ async function parsePDF(file) {
       document.getElementById('cli-name').value = cm[1].trim();
     }
 
-    if (result.products.length > 0) {
+    // Captura nome do cliente no formato "Posição Detalhada"
+    const cmPos = fullText.match(/Cliente:\s*([A-ZÁÉÍÓÚÀÃÕÇ][^\n]{3,50}?)(?:Conta:|$)/i);
+    if (cmPos && !document.getElementById('cli-name').value) {
+      document.getElementById('cli-name').value = cmPos[1].trim();
+    }
+
+    // Tenta primeiro extração XY (Posição Detalhada XP) - tem prioridade
+    const posResult = extractPosicaoDetalhadaXY(allItems);
+    if (posResult.length > 0) {
+      posResult.forEach(p => addRow(p));
+      updateSummary();
+      status('warn', `✓ <strong>${posResult.length} ativo(s)</strong> extraído(s) (${pdf_pageCount} pág.). Revise os dados antes de gerar o relatório.`);
+    } else if (result.products.length > 0) {
       dividends = result.dividends;
       result.products.sort((a,b) => b.value - a.value).forEach(p => addRow(p));
       updateSummary();
@@ -708,6 +976,151 @@ async function parsePDF(file) {
   } catch(e) {
     status('err',`⚠ Erro ao ler o PDF: ${e.message}. Tente exportar como CSV ou adicione manualmente.`);
   }
+}
+
+// ── Extração específica para Posição Detalhada XP usando coordenadas X,Y ──
+function extractPosicaoDetalhadaXY(items) {
+  // Verifica se e formato Posicao Detalhada XP
+  const fullText = items.map(i => i.str).join(' ');
+  const hasPOSI = /P\s*O\s*S\s*I/i.test(fullText);
+  const hasDETALH = /D\s*E\s*T\s*A\s*L\s*H\s*A\s*D\s*A/i.test(fullText);
+  console.log('[XP] items:', items.length, 'hasPOSI:', hasPOSI, 'hasDETALH:', hasDETALH);
+  if (!hasPOSI || !hasDETALH) return [];
+
+  const products = [];
+  const seen = new Set();
+
+  function toNum(str) {
+    if (!str) return 0;
+    const m = str.replace(/\s/g,'').match(/([\d.]+,\d{2})$/);
+    if (!m) return 0;
+    return parseFloat(m[1].replace(/\./g,'').replace(',','.'));
+  }
+
+  function add(name, type, value) {
+    if (!name || value < 0.01) return;
+    name = name.trim().replace(/\s{2,}/g,' ').substring(0,80);
+    if (name.length < 2) return;
+    const k = name.substring(0,25).toLowerCase()+'|'+ Math.round(value);
+    if (seen.has(k)) return;
+    seen.add(k);
+    products.push({name, type, value: String(value), issuer:'', adminFee:'', comm:''});
+  }
+
+  const byRow = new Map();
+  for (const it of items) {
+    const k = it.page+'_'+Math.round(it.y/3)*3;
+    if (!byRow.has(k)) byRow.set(k,[]);
+    byRow.get(k).push(it);
+  }
+
+  const lines = [];
+  for (const [k, its] of byRow) {
+    const pg = parseInt(k.split('_')[0]);
+    const y  = parseInt(k.split('_')[1]);
+    lines.push({pg, y, its: its.sort((a,b)=>a.x-b.x)});
+  }
+  lines.sort((a,b) => a.pg!==b.pg ? a.pg-b.pg : b.y-a.y);
+
+  const pgSec = new Map();
+  for (const ln of lines) {
+    if (ln.y < 340 || ln.y > 470) continue;
+    const txt = ln.its.map(i=>i.str).join(' ');
+    const txtU = txt.trim().toUpperCase();
+    // Remove tudo que não é letra A-Z ou espaço para comparação sem acentos
+    const txtA = txtU.replace(/[^A-Z ]/g,'').trim();
+    if (txtA === 'ES' || txtA === 'AES' || txtA === 'AOES' || txtA === 'ACOES' || (ln.its.length===1 && txtA.length <= 5 && txtA.endsWith('ES'))) pgSec.set(ln.pg,'acoes');
+    else if (txtA === 'RENDA FIXA')                                            pgSec.set(ln.pg,'rf');
+    else if (/FUNDOS IMOBILI/i.test(txtU))                                     pgSec.set(ln.pg,'fii');
+    else if (/FUNDOS DE INVESTIMENTO/i.test(txtU))                             pgSec.set(ln.pg,'fundos');
+    else if (txtA === 'COE')                                                   pgSec.set(ln.pg,'coe');
+  }
+  let lastSec = null, lastPg = 0;
+  for (let pg = 1; pg <= 17; pg++) {
+    if (pgSec.has(pg)) { lastSec = pgSec.get(pg); lastPg = pg; }
+    else if (lastSec && pg === lastPg+1) pgSec.set(pg, lastSec);
+  }
+  console.log('[XP] pgSec:', JSON.stringify(Object.fromEntries(pgSec)));
+  console.log('[XP] lines total:', lines.length, 'pages:', [...new Set(lines.map(l=>l.pg))].sort((a,b)=>a-b));
+
+  const SKIP = /^(Ativo|Aplicação|Carência|Vencimento|Disponível|Garantia|Bloqueio|Valor|Posição|Taxa|Mercado|Judicial|Qtd|Data|Cota|Papel|Quantidade|Financeiro|Última|Rentabilidade|Preço)$/i;
+  const TICKER = /^[A-Z]{4}\d{1,2}$/;
+  const MONTH  = /^(JAN|FEV|MAR|ABR|MAI|JUN|JUL|AGO|SET|OUT|NOV|DEZ)\/\d{4}$/i;
+  let rfName = [];
+
+  for (const ln of lines) {
+    const sec = pgSec.get(ln.pg);
+    if (!sec) continue;
+    if (ln.y < 50 || ln.y > 470) continue;
+    const first = ln.its[0];
+    if (!first) continue;
+    const f = first.str.trim();
+
+    if (sec === 'acoes' || sec === 'fii') {
+      if (!TICKER.test(f) || first.x > 65) continue;
+      // Reconstrói o texto completo da linha e extrai o último valor monetário
+      const fullLine = ln.its.map(i=>i.str).join(' ');
+      // Procura todos os padrões de valor monetário na linha
+      const matches = fullLine.match(/[\d.,]+/g) || [];
+      // Pega o último número que parece um valor financeiro (tem vírgula e 2 decimais)
+      let v = 0;
+      for (let i = matches.length-1; i >= 0; i--) {
+        const candidate = matches[i];
+        if (/^\d{1,3}(\.\d{3})*,\d{2}$/.test(candidate)) {
+          v = parseFloat(candidate.replace(/\./g,'').replace(',','.'));
+          break;
+        }
+      }
+      // Se não achou com vírgula, tenta reconstruir dos últimos itens
+      if (v === 0) {
+        const lastItems = ln.its.slice(-4).map(i=>i.str).join('');
+        const m = lastItems.match(/([\d.]+,\d{2})/);
+        if (m) v = parseFloat(m[1].replace(/\./g,'').replace(',','.'));
+      }
+      console.log('[XP]', f, '| v:', v, '| fullLine:', fullLine.substring(0,80));
+      if (v > 0) add(f, sec==='fii'?'FII':'Ações', v);
+      continue;
+    }
+
+    if (sec === 'fundos') {
+      if (first.x > 65 || f.length < 4 || /^\d/.test(f) || SKIP.test(f)) continue;
+      const valIt = ln.its.find(i=>i.x>=660&&i.x<=682&&/R\$/.test(i.str));
+      if (!valIt) continue;
+      const v = toNum(valIt.str);
+      if (v > 0) add(f, 'Fundo Alta Taxa', v);
+      continue;
+    }
+
+    if (sec === 'coe') {
+      if (first.x > 65 || f.length < 4 || SKIP.test(f)) continue;
+      const valIt = ln.its.find(i=>i.x>=668&&i.x<=692&&/R\$/.test(i.str));
+      if (!valIt) continue;
+      const v = toNum(valIt.str);
+      if (v > 0) {
+        const nome = ln.its.filter(i=>i.x<320).map(i=>i.str).join(' ').trim();
+        add(nome||f, 'COE', v);
+      }
+      continue;
+    }
+
+    if (sec === 'rf') {
+      const valIt = ln.its.find(i=>i.x>=672&&i.x<=686&&/R\$/.test(i.str));
+      if (valIt) {
+        const v = toNum(valIt.str);
+        if (v > 0 && rfName.length > 0) add(rfName.join(' '), detectType(rfName.join(' ')), v);
+        rfName = [];
+        continue;
+      }
+      const hasDate = ln.its.some(i=>i.x>=130&&i.x<=150&&/\d{2}\/\d{2}\/\d{4}/.test(i.str));
+      if (hasDate) continue;
+      if (first.x < 65 && !/^\d/.test(f) && !/^R\$/.test(f) && !SKIP.test(f) && !MONTH.test(f)) {
+        const txt = ln.its.filter(i=>i.x<210).map(i=>i.str).join(' ').trim();
+        if (txt.length > 2) rfName.push(txt);
+      }
+    }
+  }
+
+  return products;
 }
 
 // ── Agrupa itens em linhas usando coordenada Y (mesmo Y = mesma linha visual) ──
@@ -738,186 +1151,15 @@ function parseMonetary(s) {
   return 0;
 }
 
-// ── Dispatcher: detecta formato do PDF e despacha para o extrator correto ──
+// ── Extração por seção: XP Informe de Rendimentos (DETALHAMENTO DOS ATIVOS) ──
 function extractStructured(items) {
+  // Ordem global de leitura: página asc, depois topo→baixo na página
   const gord = i => (i.page - 1) * 100000 + Math.round(842 - i.y);
   const sorted = [...items].sort((a, b) => gord(a) - gord(b));
-  const normStr = s => s.replace(/\s+/g, '').toUpperCase()
-    .normalize('NFD').replace(/[̀-ͯ]/g, '');
-
-  // Verifica Posição Consolidada (texto pode vir espaçado letra a letra no PDF)
-  const rowMap0 = new Map();
-  for (const item of sorted.slice(0, 300)) {
-    const k = `${item.page}_${Math.round(item.y / 3) * 3}`;
-    if (!rowMap0.has(k)) rowMap0.set(k, []);
-    rowMap0.get(k).push(item.str);
-  }
-  const isPosConsolidada =
-    sorted.some(i => normStr(i.str).includes('POSICAODETALHADADOSATIVOS')) ||
-    [...rowMap0.values()].some(strs => normStr(strs.join('')).includes('POSICAODETALHADADOSATIVOS'));
-
-  if (isPosConsolidada) return extractPosicaoConsolidada(items);
-  if (sorted.some(i => /DETALHAMENTO\s+DOS\s+ATIVOS/i.test(i.str))) return extractInforme(items);
-  return extractStructuredFallback(items);
-}
-
-// ── Extrator: XP Posição Consolidada (posição atual da carteira) ──
-function extractPosicaoConsolidada(items) {
-  const gord = i => (i.page - 1) * 100000 + Math.round(842 - i.y);
-  const sorted = [...items].sort((a, b) => gord(a) - gord(b));
-  const normStr = s => s.replace(/\s+/g, '').toUpperCase()
-    .normalize('NFD').replace(/[̀-ͯ]/g, '');
 
   // Localiza âncora da seção
-  let detOrder = null;
-  for (const item of sorted) {
-    if (normStr(item.str).includes('POSICAODETALHADADOSATIVOS')) { detOrder = gord(item); break; }
-  }
-  if (detOrder === null) {
-    const rm = new Map();
-    for (const item of sorted) {
-      const k = `${item.page}_${Math.round(item.y / 3) * 3}`;
-      if (!rm.has(k)) rm.set(k, { ord: gord(item), strs: [] });
-      rm.get(k).strs.push(item.str);
-    }
-    for (const row of rm.values()) {
-      if (normStr(row.strs.join('')).includes('POSICAODETALHADADOSATIVOS')) { detOrder = row.ord; break; }
-    }
-  }
-  if (detOrder === null) return { products: [], dividends: 0, refDate: null };
-
-  const secItems = sorted.filter(i => gord(i) > detOrder);
-
-  const rowMap = new Map();
-  for (const item of secItems) {
-    const k = `${item.page}_${Math.round(item.y / 3) * 3}`;
-    if (!rowMap.has(k)) rowMap.set(k, []);
-    rowMap.get(k).push(item);
-  }
-  const rowKeys = [...rowMap.keys()].sort((a, b) =>
-    gord(rowMap.get(a)[0]) - gord(rowMap.get(b)[0])
-  );
-
-  const MON_RX  = /^\d{1,3}(?:\.\d{3})*,\d{2}$/;
-  const DATE_RX = /^\d{2}\/\d{2}\/\d{4}$/;
-
-  const SECTION_MAP = [
-    { rx: /\bações\b/i,                      sec: 'ACOES',      type: 'Ações'  },
-    { rx: /custódia\s+remunerada/i,          sec: 'CUSTODIA',   type: null     },
-    { rx: /\brenda\s+fixa\b/i,               sec: 'RENDA_FIXA', type: null     },
-    { rx: /fundos?\s+de\s+investimento/i,    sec: 'FUNDOS',     type: null     },
-    { rx: /\bcoe\b/i,                        sec: 'COE',        type: 'COE'    },
-    { rx: /fundos?\s+imobiliários?/i,        sec: 'FIIS',       type: 'FII'    },
-    { rx: /\bproventos?\b/i,                 sec: 'PROVENTOS',  type: null     },
-    { rx: /saldo\s+projetado/i,              sec: 'SALDO',      type: null     },
-    { rx: /próximos?\s+vencimentos?/i,       sec: 'SKIP',       type: null     },
-    { rx: /enquadramento\s+da\s+carteira/i,  sec: 'SKIP',       type: null     },
-  ];
-  const SKIP_SEC   = new Set(['CUSTODIA', 'SALDO', 'SKIP']);
-  const PENULTIMATE = new Set(['RENDA_FIXA', 'FUNDOS']); // penúltimo = Posição A Mercado
-
-  const SKIP_ROW_RX = /^(ativo|papel|qtd\.?|posição$|valor\s*(líquido|aplicado|cota|aplic)|data\s*cota|última\s*cotação|preço\s*médio|rentabilidade|financeiro|indexador|provisionado|emissor|garantia|bloqueio|judicial|em\s*cotização|qtd\s*cotas|disponível|carência|vencimento|aplicação|taxa\s*a|patrimônio|investimento|saldo\s*disponível)/i;
-
-  function getSection(row) {
-    const lineText = row.map(i => i.str).join(' ');
-    for (const s of SECTION_MAP) {
-      if (s.rx.test(lineText)) return s;
-      for (const item of row) { if (s.rx.test(item.str.trim())) return s; }
-    }
-    return null;
-  }
-
-  let section = 'NONE', secType = null, nameBuf = [];
-  const products = [];
-  let   divTotal = 0;
-  const seen     = new Set();
-
-  for (const key of rowKeys) {
-    const row      = rowMap.get(key).sort((a, b) => a.x - b.x);
-    const lineText = row.map(i => i.str).join(' ').trim();
-    if (!lineText) continue;
-
-    const secMatch = getSection(row);
-    if (secMatch) { section = secMatch.sec; secType = secMatch.type; nameBuf = []; continue; }
-
-    if (section === 'NONE') continue;
-    if (SKIP_SEC.has(section)) continue;
-
-    // Sub-cabeçalhos como "27% | Fundos de Renda Fixa Pós-Fixado"
-    if (/^\d+[\.,]\d*%\s*\|/.test(lineText)) { nameBuf = []; continue; }
-    if (SKIP_ROW_RX.test(lineText.trim())) continue;
-
-    const allMon = row
-      .filter(i => MON_RX.test(i.str.trim()))
-      .map(i    => ({ val: parseMonetary(i.str), x: i.x }))
-      .sort((a, b) => a.x - b.x);
-
-    if (section === 'PROVENTOS') {
-      if (allMon.length >= 1) divTotal += allMon[allMon.length - 1].val;
-      continue;
-    }
-
-    if (allMon.length >= 2) {
-      // Penúltimo = Posição A Mercado (antes do Valor Líquido) para RF e Fundos
-      const posVal = PENULTIMATE.has(section)
-        ? allMon[allMon.length - 2].val
-        : allMon[allMon.length - 1].val;
-
-      if (posVal < 1) { nameBuf = []; continue; }
-
-      let assetName;
-      if (nameBuf.length > 0) {
-        assetName = nameBuf.join(' ').replace(/\s+/g, ' ').trim().substring(0, 90);
-        nameBuf = [];
-      } else {
-        const tokens = row.filter(i => {
-          const s = i.str.trim();
-          if (s.length < 2) return false;
-          if (MON_RX.test(s)) return false;
-          if (DATE_RX.test(s)) return false;
-          if (/^\d+$/.test(s)) return false;
-          if (/^[\d.,\-+%]+$/.test(s)) return false;
-          if (/^(indefinido|d\+\d|posição)$/i.test(s)) return false;
-          return true;
-        });
-        assetName = tokens.map(i => i.str).join(' ').replace(/\s+/g, ' ').trim().substring(0, 90);
-      }
-      if (!assetName || assetName.length < 2) continue;
-
-      const type = secType || detectType(assetName);
-      const dk   = `${assetName.toLowerCase().substring(0, 20)}|${Math.round(posVal)}`;
-      if (!seen.has(dk)) {
-        seen.add(dk);
-        products.push({ name: assetName, type, value: posVal.toString(), issuer: '', adminFee: '', comm: '' });
-      }
-    } else {
-      const tokens = row.filter(i => {
-        const s = i.str.trim();
-        if (s.length < 2) return false;
-        if (MON_RX.test(s)) return false;
-        if (DATE_RX.test(s)) return false;
-        if (/^\d+$/.test(s)) return false;
-        if (/^[\d.,\-+%]+$/.test(s)) return false;
-        if (/^(indefinido|d\+\d)$/i.test(s)) return false;
-        if (SKIP_ROW_RX.test(s)) return false;
-        return true;
-      });
-      const txt = tokens.map(i => i.str).join(' ').replace(/\s+/g, ' ').trim();
-      if (txt.length >= 2 && !/^\d+[\.,]\d+%/.test(txt)) nameBuf.push(txt);
-    }
-  }
-
-  const refM = sorted.map(i => i.str).join(' ').match(/referência[:\s]+(\d{2}\/\d{2}\/\d{4})/i);
-  return { products, dividends: divTotal, refDate: refM ? refM[1] : null };
-}
-
-// ── Extrator: XP Informe de Rendimentos (DETALHAMENTO DOS ATIVOS) ──
-function extractInforme(items) {
-  const gord = i => (i.page - 1) * 100000 + Math.round(842 - i.y);
-  const sorted = [...items].sort((a, b) => gord(a) - gord(b));
-
   const detIdx = sorted.findIndex(i => /DETALHAMENTO\s+DOS\s+ATIVOS/i.test(i.str));
-  if (detIdx < 0) return { products: [], dividends: 0, refDate: null };
+  if (detIdx < 0) return extractStructuredFallback(items);
 
   const detOrder = gord(sorted[detIdx]);
 
@@ -938,6 +1180,7 @@ function extractInforme(items) {
     return xs[Math.floor(xs.length / 2)];
   };
   const xCol2025 = medX(secItems.filter(i => /31\/12\/2025/.test(i.str) && i.x > 300));
+  const xCol2024 = medX(secItems.filter(i => /31\/12\/2024/.test(i.str) && i.x > 300));
 
   // Agrupa por linha visual (página + y arredondado a 3px)
   const rowMap = new Map();
@@ -1142,11 +1385,14 @@ function extractFromLines(lines) {
     'ETF','BDR','NOTA COMERCIAL',
   ];
 
+  // Regex para detectar tickers de ações/FIIs (ex: PETR4, VALE3, ALZR11)
+  const TICKER_RX = /^([A-Z]{4}\d{1,2})\s/;
+
   const VAL_RX = /(\d{1,3}(?:\.\d{3})*,\d{2})/g;
   function valsInLine(line) {
     const r=[]; let m; VAL_RX.lastIndex=0;
     while((m=VAL_RX.exec(line))!==null){
-      const v=parseFloat(m[1].replace(/\./g,'').replace(',','.')); if(v>=100)r.push(v);
+      const v=parseFloat(m[1].replace(/\./g,'').replace(',','.')); if(v>=50)r.push(v);
     }
     return r;
   }
@@ -1162,7 +1408,28 @@ function extractFromLines(lines) {
 
   for (let i=0;i<lines.length;i++) {
     if (CC_RX.test(lines[i])) continue;
-    const up=lines[i].toUpperCase();
+    const up = lines[i].toUpperCase().trim();
+
+    // Detecta tickers de ações/FIIs (PETR4, VALE3, ALZR11, etc.)
+    const tickerMatch = up.match(TICKER_RX);
+    if (tickerMatch) {
+      const ticker = tickerMatch[1];
+      // Pega o último valor da linha (posição atual)
+      const vs = valsInLine(lines[i]);
+      if (vs.length) {
+        const fVal = vs[vs.length - 1]; // último valor = posição
+        if (fVal >= 50) {
+          const key = `${ticker.toLowerCase()}|${Math.round(fVal)}`;
+          if (!seen.has(key)) {
+            seen.add(key);
+            const tipo = ticker.endsWith('11') || ticker.endsWith('12') ? 'FII' : 'Ações';
+            added.push({ val: fVal, name: ticker, type: tipo, issuer: '' });
+          }
+        }
+      }
+      continue;
+    }
+
     if (!KEYWORDS.some(k=>up.includes(k))) continue;
     let fVal=0;
     for (let j=i;j<=Math.min(i+4,lines.length-1);j++){
@@ -1233,6 +1500,15 @@ function genReport() {
   const f5  = feeA*5,    f10  = feeA*10;
   const maxBar = Math.max(c10,f10)*1.1||1;
   const bh = v => Math.max(4,Math.round(v/maxBar*160));
+
+  // ── Juros compostos — só na ECONOMIA do modelo fee ──
+  // Quanto o cliente acumula a mais migrando para fee-based
+  // Fórmula: P × [(1 + r - feePct)^n - (1 + r - commPct)^n]
+  const RETORNO_BRUTO = 0.12; // 12% a.a. retorno bruto assumido
+  const r = RETORNO_BRUTO;
+  const ecoComp5  = total > 0 ? total * (Math.pow(1 + r - feePct, 5)  - Math.pow(1 + r - avgCommPct, 5))  : 0;
+  const ecoComp10 = total > 0 ? total * (Math.pow(1 + r - feePct, 10) - Math.pow(1 + r - avgCommPct, 10)) : 0;
+  const ecoComp20 = total > 0 ? total * (Math.pow(1 + r - feePct, 20) - Math.pow(1 + r - avgCommPct, 20)) : 0;
 
   // ── Product rows agrupados por tipo ──
   const prodRows = (() => {
@@ -1389,7 +1665,7 @@ function genReport() {
   <div class="rep-desc">Analisamos ${products.length} produto(s) com patrimônio total de ${BRL(total)}${cAdv?' alocados em '+esc(cAdv):''}. Identificamos ${highRisk.length} produto(s) com alto potencial de conflito de interesse, representando ${PCT(hrPct,1)} do patrimônio. <strong style="color:var(--champagne)">A taxa média de custo atual estimada é ${F2(avgCommPct)}</strong> — acima do dobro do modelo fee-based.</div>
 
   <!-- Taxa média em destaque -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:2px">
+  <div class="rep-rate-grid" style="gap:2px;margin-bottom:2px">
     <div style="background:rgba(192,57,43,0.18);padding:24px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px">
       <div>
         <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(245,240,232,0.4);margin-bottom:6px">Taxa Média — Modelo Atual</div>
@@ -1484,7 +1760,7 @@ ${highRisk.length ? `
 <div class="rep-section dark">
   <div class="rep-eye">Impacto Financeiro</div>
   <div class="rep-title" style="color:var(--offwhite)">Quanto você perde <span>ao longo do tempo</span></div>
-  <div class="rep-desc">Projeção acumulada do custo no modelo atual versus o modelo fee-based. Valores sem considerar juros compostos sobre a economia — o impacto real é ainda maior.</div>
+  <div class="rep-desc">Custo acumulado no modelo atual (valores lineares) versus a economia real ao migrar para o modelo fee-based, calculada com juros compostos — cada real economizado em taxa continua crescendo no seu patrimônio.</div>
 
   <div class="kpi-grid">
     <div class="kpi-box" style="background:rgba(255,255,255,0.04);border:1px solid rgba(201,169,110,0.1)">
@@ -1501,10 +1777,41 @@ ${highRisk.length ? `
       <div class="kpi-lbl" style="color:rgba(245,240,232,0.35)">Custo acumulado — 10 anos</div>
     </div>
     <div class="kpi-box" style="background:var(--champagne-dim);border:1px solid rgba(201,169,110,0.2)">
-      <div class="kpi-num" style="color:var(--champagne)">${BRL(s10)}</div>
-      <div class="kpi-lbl" style="color:rgba(245,240,232,0.35)">Economia total em 10 anos</div>
+      <div class="kpi-num" style="color:var(--champagne)">${BRL(ecoComp10)}</div>
+      <div style="font-size:10px;color:rgba(245,240,232,0.4);margin-top:4px">c/ juros compostos</div>
+      <div class="kpi-lbl" style="color:rgba(245,240,232,0.35)">Economia real em 10 anos</div>
     </div>
   </div>
+
+  <!-- Economia com juros compostos -->
+  ${total > 0 && savingPct > 0 ? `
+  <div style="background:rgba(255,255,255,0.04);padding:32px;border-radius:2px;margin-top:24px">
+    <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--champagne);margin-bottom:6px;opacity:.7">Economia Real no Modelo Fee-Based — Juros Compostos (12% a.a.)</div>
+    <div style="font-size:12px;color:rgba(245,240,232,0.4);margin-bottom:24px">Quanto a mais seu patrimônio de ${BRL(total)} acumula migrando para o modelo fee</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px">
+      <div style="text-align:center;padding:20px;background:rgba(39,174,96,0.06);border-radius:2px;border:1px solid rgba(39,174,96,0.15)">
+        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(245,240,232,0.4);margin-bottom:12px">5 Anos</div>
+        <div style="font-size:11px;color:rgba(245,240,232,0.3);margin-bottom:4px">linear: ${BRL(s5)}</div>
+        <div style="font-size:22px;font-weight:600;color:#88d4a8">+${BRL(ecoComp5)}</div>
+        <div style="font-size:10px;color:rgba(245,240,232,0.35);margin-top:4px">c/ juros compostos</div>
+      </div>
+      <div style="text-align:center;padding:20px;background:rgba(39,174,96,0.09);border-radius:2px;border:1px solid rgba(39,174,96,0.2)">
+        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(245,240,232,0.4);margin-bottom:12px">10 Anos</div>
+        <div style="font-size:11px;color:rgba(245,240,232,0.3);margin-bottom:4px">linear: ${BRL(s10)}</div>
+        <div style="font-size:26px;font-weight:600;color:#88d4a8">+${BRL(ecoComp10)}</div>
+        <div style="font-size:10px;color:rgba(245,240,232,0.35);margin-top:4px">c/ juros compostos</div>
+      </div>
+      <div style="text-align:center;padding:20px;background:rgba(39,174,96,0.12);border-radius:2px;border:1px solid rgba(39,174,96,0.25)">
+        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(245,240,232,0.4);margin-bottom:12px">20 Anos</div>
+        <div style="font-size:11px;color:rgba(245,240,232,0.3);margin-bottom:4px">linear: ${BRL(s10*2)}</div>
+        <div style="font-size:30px;font-weight:600;color:var(--champagne)">+${BRL(ecoComp20)}</div>
+        <div style="font-size:10px;color:rgba(245,240,232,0.35);margin-top:4px">c/ juros compostos</div>
+      </div>
+    </div>
+    <div style="font-size:11px;color:rgba(245,240,232,0.25);text-align:center;line-height:1.6">
+      * Retorno bruto assumido: 12% a.a. | Patrimônio constante sem aportes adicionais
+    </div>
+  </div>` : ''}
 
   <div style="background:rgba(255,255,255,0.04);padding:32px;border-radius:2px;margin-top:24px">
     <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--champagne);margin-bottom:20px;opacity:.7">Comparativo Visual — Custo Acumulado</div>
@@ -1549,10 +1856,25 @@ ${highRisk.length ? `
   </div>
   ${saving>0 ? `
   <div class="savings-box">
-    <div style="font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--champagne);opacity:.6;margin-bottom:12px">Economia Total em 10 Anos</div>
-    <div class="sav-num">${BRL(s10)}</div>
+    <div style="font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--champagne);opacity:.6;margin-bottom:12px">Economia Real Migrando para Fee-Based</div>
+    <div class="sav-num">${BRL(ecoComp10)}</div>
     <div style="font-size:14px;font-weight:600;color:var(--champagne);margin:6px 0;letter-spacing:1px">${savingPct>=0?'+':''}${F2(Math.abs(savingPct))} ao ano de diferença entre os modelos</div>
-    <div class="sav-lbl">Esse valor permanece no seu patrimônio, não no bolso do assessor</div>
+    <div class="sav-lbl">Patrimônio adicional acumulado em 10 anos com juros compostos (12% a.a.)</div>
+    <div style="margin-top:20px;display:flex;gap:32px;justify-content:center;flex-wrap:wrap">
+      <div style="text-align:center">
+        <div style="font-size:11px;color:rgba(245,240,232,0.35);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">5 anos</div>
+        <div style="font-size:20px;color:var(--champagne-light);font-weight:300">+${BRL(ecoComp5)}</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:11px;color:rgba(245,240,232,0.35);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">10 anos</div>
+        <div style="font-size:20px;color:var(--champagne-light);font-weight:300">+${BRL(ecoComp10)}</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:11px;color:rgba(245,240,232,0.35);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">20 anos</div>
+        <div style="font-size:24px;color:var(--champagne);font-weight:600">+${BRL(ecoComp20)}</div>
+      </div>
+    </div>
+    <div style="margin-top:16px;font-size:11px;color:rgba(245,240,232,0.25)">* Retorno bruto assumido: 12% a.a. | Patrimônio constante sem aportes</div>
   </div>` : `
   <div class="alert-box alert-info" style="margin-top:24px">
     <strong>Observação:</strong> Para este nível de patrimônio, a diferença de custo entre modelos é reduzida. O valor principal está na qualidade dos produtos indicados, na ausência de conflitos de interesse e no cashback das comissões.
